@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+
+      - name: Rust Checks (xq-sns-app)
+        run: |
+          cd xq-sns-app
+          cargo fmt --all -- --check
+          cargo clippy -- -D warnings
+          cargo test
+          
+      - name: Rust Checks (PLocoBuf)
+        run: |
+          cd PLocoBuf
+          cargo test
+          
+      - name: Frontend Checks
+        run: |
+          cd xq-sns-app/frontend
+          npm install
+          npm run lint
+          npm run build
