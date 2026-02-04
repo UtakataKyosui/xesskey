@@ -1,6 +1,0 @@
-{
-  "actions": {
-    "actions/checkout@v6.0.2": "de0fac2e4500dabe0009e67214ff5f5447ce83dd",
-    "moonrepo/setup-toolchain@v0.6.1": "78058180242ce00f714afc17fef8c84972ab4df2"
-  }
-}

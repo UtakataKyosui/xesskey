@@ -1,4 +1,0 @@
-{
-  "actions/checkout": "v6.0.2",
-  "moonrepo/setup-toolchain": "v0.6.1"
-}
