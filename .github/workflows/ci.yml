@@ -10,6 +10,8 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgres://loco:loco@postgres:5432/xq-sns-app_test
     services:
       postgres:
         image: postgres:latest
@@ -17,15 +19,34 @@ jobs:
           POSTGRES_USER: loco
           POSTGRES_PASSWORD: loco
           POSTGRES_DB: xq-sns-app_test
-        ports:
-          - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-timeout 5s
           --health-retries 5
     steps:
       - uses: actions/checkout@v4
-      
+
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Rust Cache
+        uses: swatinem/rust-cache@v2
+        with:
+            workspaces: |
+              xq-sns-app -> target
+              PLocoBuf -> target
 
       - name: Rust Checks (xq-sns-app)
         run: |
@@ -33,12 +54,12 @@ jobs:
           cargo fmt --all -- --check
           cargo clippy -- -D warnings
           cargo test
-          
+
       - name: Rust Checks (PLocoBuf)
         run: |
           cd PLocoBuf
           cargo test
-          
+
       - name: Frontend Checks
         run: |
           cd xq-sns-app/frontend

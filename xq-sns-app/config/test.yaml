@@ -69,9 +69,9 @@ mailer:
 
 # Database Configuration
 database:
-  # Database connection URI
-  uri: {{ get_env(name="DATABASE_URL", default="postgres://loco:loco@localhost:5432/xq-sns-app_test") }}
-  # When enabled, the sql query will be logged.
+  # Database connection URI 
+  uri: {{ get_env(name="DATABASE_URL", default="postgres://loco:loco@localhost:5434/xq-sns-app_test") }}
+  
   enable_logging: false
   # Set the timeout duration when acquiring a connection.
   connect_timeout: {{ get_env(name="DB_CONNECT_TIMEOUT", default="500") }}

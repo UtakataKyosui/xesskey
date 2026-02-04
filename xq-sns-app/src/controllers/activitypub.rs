@@ -57,6 +57,6 @@ pub async fn get_actor(
 
 pub fn routes() -> Routes {
     Routes::new()
-        .prefix("users")
-        .add("/:username", get(get_actor))
+        .prefix("/users")
+        .add("/{username}", get(get_actor))
 }

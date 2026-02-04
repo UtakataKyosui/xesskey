@@ -66,6 +66,6 @@ pub async fn index(
 
 pub fn routes() -> Routes {
     Routes::new()
-        .prefix(".well-known/webfinger")
+        .prefix("/.well-known/webfinger")
         .add("/", get(index))
 }
