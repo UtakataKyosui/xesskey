@@ -3,6 +3,30 @@
 version = 4
 
 [[package]]
+name = "activitystreams"
+version = "0.7.0-alpha.25"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9c140d4bd704e9acd758c4392e222af44c66d1a29165937c9b33c7df7b697678"
+dependencies = [
+ "activitystreams-kinds",
+ "iri-string",
+ "mime",
+ "serde",
+ "serde_json",
+ "time",
+]
+
+[[package]]
+name = "activitystreams-kinds"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e97dfe76efd8c0b113cc3580a6b5f4acba47662e3cfbbfcce081c9ac89798990"
+dependencies = [
+ "iri-string",
+ "serde",
+]
+
+[[package]]
 name = "adler2"
 version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1640,6 +1664,30 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9171a2ea8a68358193d15dd5d70c1c10a2afc3e7e4c5bc92bc9f025cebd7359c"
 
 [[package]]
+name = "http-signature-normalization"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b95e3149194de5f3f9d5225bcc6a8677979f8ff8ce39c85654730ad4824f101e"
+dependencies = [
+ "httpdate",
+]
+
+[[package]]
+name = "http-signature-normalization-reqwest"
+version = "0.14.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7b2441a67ea8984d46c95099b4a9be83dc5bed2c254b8443dc2554edaeaa7d0b"
+dependencies = [
+ "async-trait",
+ "base64",
+ "http-signature-normalization",
+ "httpdate",
+ "reqwest 0.13.1",
+ "sha2",
+ "tokio",
+]
+
+[[package]]
 name = "httparse"
 version = "1.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2525,7 +2573,7 @@ dependencies = [
  "md-5",
  "percent-encoding",
  "quick-xml",
- "reqwest",
+ "reqwest 0.12.28",
  "serde",
  "serde_json",
  "tokio",
@@ -3133,6 +3181,37 @@ dependencies = [
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "wasm-streams",
+ "web-sys",
+]
+
+[[package]]
+name = "reqwest"
+version = "0.13.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "04e9018c9d814e5f30cc16a0f03271aeab3571e609612d9fe78c1aa8d11c2f62"
+dependencies = [
+ "base64",
+ "bytes",
+ "futures-core",
+ "http",
+ "http-body",
+ "http-body-util",
+ "hyper",
+ "hyper-util",
+ "js-sys",
+ "log",
+ "percent-encoding",
+ "pin-project-lite",
+ "serde",
+ "serde_json",
+ "sync_wrapper",
+ "tokio",
+ "tower 0.5.3",
+ "tower-http",
+ "tower-service",
+ "url",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
  "web-sys",
 ]
 
@@ -5441,20 +5520,25 @@ dependencies = [
 name = "xq-sns-app"
 version = "0.1.0"
 dependencies = [
+ "activitystreams",
  "async-trait",
  "axum",
  "axum-extra",
+ "base64",
  "chrono",
+ "http-signature-normalization-reqwest",
  "include_dir",
  "insta",
  "loco-rs",
  "migration",
  "regex",
+ "rsa",
  "rstest",
  "sea-orm",
  "serde",
  "serde_json",
  "serial_test",
+ "sha2",
  "tokio",
  "tracing",
  "tracing-subscriber",

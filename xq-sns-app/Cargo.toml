@@ -36,6 +36,11 @@ validator = { version = "0.20" }
 uuid = { version = "1.6", features = ["v4"] }
 include_dir = { version = "0.7" }
 axum-extra = { version = "0.10", features = ["form"] }
+activitystreams = "0.7.0-alpha.25"
+http-signature-normalization-reqwest = "0.14.0"
+rsa = "0.9"
+base64 = "0.22"
+sha2 = "0.10"
 
 [[bin]]
 name = "xq_sns_app-cli"
