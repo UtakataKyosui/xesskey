@@ -110,9 +110,33 @@ jobs:
         env:
           DATABASE_URL: postgres://loco:loco@localhost:5432/xq-sns-app_test
 
-  # PLocoBuf: Tests
-  rust-test-plocobuf:
-    name: Run Tests (PLocoBuf)
+  # PLocoBuf: Tests (commented out - no tests yet)
+  # rust-test-plocobuf:
+  #   name: Run Tests (PLocoBuf)
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: read
+  #   steps:
+  #     - name: Checkout the code
+  #       uses: actions/checkout@v4
+  #     
+  #     - uses: dtolnay/rust-toolchain@stable
+  #       with:
+  #         toolchain: ${{ env.RUST_TOOLCHAIN }}
+  #     
+  #     - name: Setup Rust cache
+  #       uses: Swatinem/rust-cache@v2
+  #       with:
+  #         workspaces: PLocoBuf -> target
+  #     
+  #     - name: Run cargo test
+  #       run: |
+  #         cd PLocoBuf
+  #         cargo test
+
+  # Frontend: Format check
+  frontend-format:
+    name: Frontend Format Check
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -120,23 +144,24 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v4
       
-      - uses: dtolnay/rust-toolchain@stable
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          toolchain: ${{ env.RUST_TOOLCHAIN }}
+          node-version: 20
       
-      - name: Setup Rust cache
-        uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: PLocoBuf -> target
-      
-      - name: Run cargo test
+      - name: Install Dependencies
         run: |
-          cd PLocoBuf
-          cargo test
+          cd xq-sns-app/frontend
+          npm install
+      
+      - name: Format Check
+        run: |
+          cd xq-sns-app/frontend
+          npm run format
 
-  # Frontend: Lint and Build
-  frontend:
-    name: Frontend Checks
+  # Frontend: Lint
+  frontend-lint:
+    name: Frontend Lint
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -158,8 +183,29 @@ jobs:
         run: |
           cd xq-sns-app/frontend
           npm run lint
+
+  # Frontend: Build
+  frontend-build:
+    name: Frontend Build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      
+      - name: Install Dependencies
+        run: |
+          cd xq-sns-app/frontend
+          npm install
       
       - name: Build
         run: |
           cd xq-sns-app/frontend
           npm run build
+

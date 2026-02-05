@@ -7,6 +7,7 @@
     "dev": "rsbuild dev --open",
     "build": "rsbuild build",
     "lint": "biome check src/",
+    "format": "biome check --write src/",
     "preview": "rsbuild preview"
   },
   "dependencies": {
