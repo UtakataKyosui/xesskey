@@ -7,8 +7,8 @@ on:
   pull_request:
 
 jobs:
-  test:
-    name: Test
+  rust-xq-sns-app:
+    name: Rust Checks (xq-sns-app)
     runs-on: ubuntu-latest
     env:
       DATABASE_URL: postgres://loco:loco@postgres:5432/xq-sns-app_test
@@ -34,35 +34,67 @@ jobs:
         with:
           components: clippy, rustfmt
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Rust Cache
+        uses: swatinem/rust-cache@v2
         with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
+          workspaces: xq-sns-app -> target
+
+      - name: Format Check
+        run: |
+          cd xq-sns-app
+          cargo fmt --all -- --check
+
+      - name: Clippy
+        run: |
+          cd xq-sns-app
+          cargo clippy -- -D warnings
+
+      - name: Tests
+        run: |
+          cd xq-sns-app
+          cargo test
+
+  rust-plocobuf:
+    name: Rust Checks (PLocoBuf)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Rust Cache
         uses: swatinem/rust-cache@v2
         with:
-            workspaces: |
-              xq-sns-app -> target
-              PLocoBuf -> target
+          workspaces: PLocoBuf -> target
 
-      - name: Rust Checks (xq-sns-app)
-        run: |
-          cd xq-sns-app
-          cargo fmt --all -- --check
-          cargo clippy -- -D warnings
-          cargo test
-
-      - name: Rust Checks (PLocoBuf)
+      - name: Tests
         run: |
           cd PLocoBuf
           cargo test
 
-      - name: Frontend Checks
+  frontend:
+    name: Frontend Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Dependencies
         run: |
           cd xq-sns-app/frontend
           npm install
+
+      - name: Lint
+        run: |
+          cd xq-sns-app/frontend
           npm run lint
+
+      - name: Build
+        run: |
+          cd xq-sns-app/frontend
           npm run build
