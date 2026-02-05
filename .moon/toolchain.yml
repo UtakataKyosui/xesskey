@@ -1,0 +1,13 @@
+$schema: 'https://moonrepo.dev/schemas/toolchain.json'
+
+# Node.js設定
+node:
+  packageManager: 'npm'
+  # バージョンは.prototoolsで管理
+
+# Rust設定
+rust:
+  # バージョンは.prototoolsで管理
+  components:
+    - 'clippy'
+    - 'rustfmt'

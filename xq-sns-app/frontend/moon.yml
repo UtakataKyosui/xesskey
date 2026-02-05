@@ -1,0 +1,36 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+type: 'application'
+language: 'typescript'
+
+tasks:
+  build:
+    command: 'npm run build'
+    inputs:
+      - 'src/**/*'
+      - 'package.json'
+      - 'tsconfig.json'
+      - 'rsbuild.config.ts'
+    outputs:
+      - 'dist'
+
+  dev:
+    command: 'npm run dev'
+    local: true
+
+  lint:
+    command: 'npm run lint'
+    inputs:
+      - 'src/**/*'
+      - 'package.json'
+
+  format:
+    command: 'npm run format'
+    inputs:
+      - 'src/**/*'
+    local: true
+
+  preview:
+    command: 'npm run preview'
+    local: true
+    deps:
+      - '~:build'

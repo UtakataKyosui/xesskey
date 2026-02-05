@@ -1,0 +1,40 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+type: 'application'
+language: 'rust'
+
+tasks:
+  build:
+    command: 'cargo build'
+    inputs:
+      - 'src/**/*'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+    outputs:
+      - 'target'
+
+  test:
+    command: 'cargo test'
+    inputs:
+      - 'src/**/*'
+      - 'tests/**/*'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+    deps:
+      - 'frontend:build'
+
+  fmt:
+    command: 'cargo fmt --all -- --check'
+    inputs:
+      - 'src/**/*'
+
+  clippy:
+    command: 'cargo clippy -- -D warnings'
+    inputs:
+      - 'src/**/*'
+      - 'Cargo.toml'
+
+  dev:
+    command: 'cargo run -- start'
+    local: true
+    deps:
+      - 'frontend:build'

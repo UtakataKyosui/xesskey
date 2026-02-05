@@ -11,54 +11,9 @@ env:
   TOOLCHAIN_PROFILE: minimal
 
 jobs:
-  # xq-sns-app: Rust format check
-  rust-fmt-xq-sns-app:
-    name: Check Style (xq-sns-app)
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout the code
-        uses: actions/checkout@v4
-      
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: ${{ env.RUST_TOOLCHAIN }}
-          components: rustfmt
-      
-      - name: Run cargo fmt
-        run: |
-          cd xq-sns-app
-          cargo fmt --all -- --check
-
-  # xq-sns-app: Clippy
-  rust-clippy-xq-sns-app:
-    name: Run Clippy (xq-sns-app)
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout the code
-        uses: actions/checkout@v4
-      
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: ${{ env.RUST_TOOLCHAIN }}
-          components: clippy
-      
-      - name: Setup Rust cache
-        uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: xq-sns-app -> target
-      
-      - name: Run cargo clippy
-        run: |
-          cd xq-sns-app
-          cargo clippy -- -D warnings
-
-  # xq-sns-app: Tests
-  rust-test-xq-sns-app:
-    name: Run Tests (xq-sns-app)
+  # Setup and run checks using Moonrepo
+  check:
+    name: Run All Checks
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -79,133 +34,51 @@ jobs:
     steps:
       - name: Checkout the code
         uses: actions/checkout@v4
-      
+
       - name: Install Protoc
         uses: arduino/setup-protoc@v3
-      
+
+      - name: Setup Moonrepo toolchain
+        uses: moonrepo/setup-toolchain@v0
+        with:
+          auto-install: true
+
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ env.RUST_TOOLCHAIN }}
-      
+          components: rustfmt, clippy
+
       - name: Setup Rust cache
         uses: Swatinem/rust-cache@v2
         with:
-          workspaces: xq-sns-app -> target
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      
-      - name: Build frontend
+          workspaces: |
+            xq-sns-app -> target
+            PLocoBuf -> target
+
+      - name: Install frontend dependencies
         run: |
           cd xq-sns-app/frontend
           npm install
-          npm run build
-      
-      - name: Run cargo test
+
+      # Format checks
+      - name: Run format checks
         run: |
-          cd xq-sns-app
-          cargo test
+          moon run xq-sns-app:fmt
+          moon run PLocoBuf:fmt
+          moon run frontend:lint
+
+      # Clippy checks
+      - name: Run Clippy
+        run: |
+          moon run xq-sns-app:clippy
+          moon run PLocoBuf:clippy
+
+      # Build frontend
+      - name: Build frontend
+        run: moon run frontend:build
+
+      # Run tests
+      - name: Run tests
+        run: moon run xq-sns-app:test
         env:
           DATABASE_URL: postgres://loco:loco@localhost:5432/xq-sns-app_test
-
-  # PLocoBuf: Tests (commented out - no tests yet)
-  # rust-test-plocobuf:
-  #   name: Run Tests (PLocoBuf)
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     contents: read
-  #   steps:
-  #     - name: Checkout the code
-  #       uses: actions/checkout@v4
-  #     
-  #     - uses: dtolnay/rust-toolchain@stable
-  #       with:
-  #         toolchain: ${{ env.RUST_TOOLCHAIN }}
-  #     
-  #     - name: Setup Rust cache
-  #       uses: Swatinem/rust-cache@v2
-  #       with:
-  #         workspaces: PLocoBuf -> target
-  #     
-  #     - name: Run cargo test
-  #       run: |
-  #         cd PLocoBuf
-  #         cargo test
-
-  # Frontend: Format check
-  frontend-format:
-    name: Frontend Format Check
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout the code
-        uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      
-      - name: Install Dependencies
-        run: |
-          cd xq-sns-app/frontend
-          npm install
-      
-      - name: Format Check
-        run: |
-          cd xq-sns-app/frontend
-          npm run format
-
-  # Frontend: Lint
-  frontend-lint:
-    name: Frontend Lint
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout the code
-        uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      
-      - name: Install Dependencies
-        run: |
-          cd xq-sns-app/frontend
-          npm install
-      
-      - name: Lint
-        run: |
-          cd xq-sns-app/frontend
-          npm run lint
-
-  # Frontend: Build
-  frontend-build:
-    name: Frontend Build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout the code
-        uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      
-      - name: Install Dependencies
-        run: |
-          cd xq-sns-app/frontend
-          npm install
-      
-      - name: Build
-        run: |
-          cd xq-sns-app/frontend
-          npm run build
-

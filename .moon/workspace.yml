@@ -1,0 +1,26 @@
+$schema: 'https://moonrepo.dev/schemas/workspace.json'
+
+# VCS設定
+vcs:
+  manager: 'git'
+  defaultBranch: 'main'
+  syncHooks: false
+
+# プロジェクトソース
+projects:
+  - 'xq-sns-app'
+  - 'xq-sns-app/frontend'
+  - 'PLocoBuf'
+
+# ランナー設定
+runner:
+  cacheLifetime: '7 days'
+  inheritColorsForPipedTasks: true
+
+# コード所有者設定
+codeowners:
+  syncOnRun: false
+
+# ハッシュカスタマイズ
+hasher:
+  walkStrategy: 'vcs'
